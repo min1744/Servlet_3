@@ -8,16 +8,15 @@ import com.iu.utill.DBConnector;
 
 public class UploadDAO {
 	//insert()
-	public int insert(UploadDTO uploadDTO) throws Exception {
+	public int insert(UploadDTO uploadDTO, Connection con) throws Exception {
 		int result = 0;
-		Connection con = DBConnector.getConnect();
 		String sql = "INSERT INTO UPLOAD VALUES(NOTICE_SEQ.NEXTVAL, ?, ?, ?)";
 		PreparedStatement st = con.prepareStatement(sql);
 		st.setInt(1, uploadDTO.getNum());
 		st.setString(2, uploadDTO.getOname());
 		st.setString(3, uploadDTO.getFname());
 		result = st.executeUpdate();
-		DBConnector.disConnect(st, con);
+		st.close();
 		
 		return result;
 	}

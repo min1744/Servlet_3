@@ -1,6 +1,8 @@
 package com.iu.notice;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import com.iu.page.SearchPager;
 import com.iu.page.SearchRow;
 import com.iu.upload.UploadDAO;
 import com.iu.upload.UploadDTO;
+import com.iu.utill.DBConnector;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
@@ -141,18 +144,37 @@ public class NoticeService implements Action {
 			noticeDTO.setContents(multi.getParameter("contents"));
 			
 			int result=0;
+			Connection con = null;
 			try {
-				/*synchronized (uploadDTO) {
-					
-				}*/
+				con = DBConnector.getConnect();
+				con.setAutoCommit(false);
 				int num = noticeDAO.getNum();
 				noticeDTO.setNum(num);
-				result = noticeDAO.insert(noticeDTO);
+				result = noticeDAO.insert(noticeDTO, con);
 				uploadDTO.setNum(num);
-				result = uploadDAO.insert(uploadDTO);
+				result = uploadDAO.insert(uploadDTO, con);
+				if(result < 1) {
+					throw new Exception();
+				}
+				con.commit();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
+				result = 0;
+				try {
+					con.rollback();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				e.printStackTrace();
+			} finally {
+				try {
+					con.setAutoCommit(true);
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			if(result>0) {
 				check=false;

@@ -37,6 +37,9 @@
 					<td class="center">${dto.hit}</td>
 				</tr>
 				<tr>
+					<td colspan="5">Upload : <a href="../upload/${fname}">${upload.oname}</a></td>
+				</tr>
+				<tr>
 					<td colspan="5">${dto.contents}</td>
 				</tr>
 				<tr>

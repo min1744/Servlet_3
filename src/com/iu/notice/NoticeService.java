@@ -11,15 +11,19 @@ import com.iu.action.ActionForward;
 import com.iu.page.SearchMakePage;
 import com.iu.page.SearchPager;
 import com.iu.page.SearchRow;
+import com.iu.upload.UploadDAO;
+import com.iu.upload.UploadDTO;
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 public class NoticeService implements Action {
 
 	private NoticeDAO noticeDAO;
+	private UploadDAO uploadDAO;
 
 	public NoticeService() {
 		noticeDAO = new NoticeDAO();
+		uploadDAO = new UploadDAO();
 	}
 
 	@Override
@@ -73,6 +77,7 @@ public class NoticeService implements Action {
 		//글이 있으면 출력
 		//글이 없으면 삭제되었거나 없는 글입니다.(alert) 리스트로
 		NoticeDTO noticeDTO = null;
+		NoticeDTO uploadDTO = null;
 		try {
 			int num = Integer.parseInt(request.getParameter("num"));
 			noticeDTO = noticeDAO.selectOne(num);
@@ -83,6 +88,7 @@ public class NoticeService implements Action {
 		String path="";
 		if(noticeDTO != null) {
 			request.setAttribute("dto", noticeDTO);
+			request.setAttribute("upload", uploadDTO);
 			path = "../WEB-INF/views/notice/noticeSelect.jsp";
 		}else {
 			request.setAttribute("message", "No Data");
@@ -106,8 +112,9 @@ public class NoticeService implements Action {
 		if(method.equals("POST")) {
 			NoticeDTO noticeDTO = new NoticeDTO();
 			//1. request를 하나로 합치기
+			//파일을 저장할 디스크 경로(C:
 			String saveDirectory=request.getServletContext().getRealPath("upload");
-			//System.out.println(saveDirectory);
+			System.out.println(saveDirectory);
 			int maxPostSize=1024*1024*10;//byte
 			String encoding = "UTF-8";
 			MultipartRequest multi=null;
@@ -122,10 +129,11 @@ public class NoticeService implements Action {
 			String fileName = multi.getFilesystemName("f1");//파일의 파라미터 이름
 			//클라이언트가 업로드 할 때의 파일명
 			String oName = multi.getOriginalFileName("f1");//파일의 파라미터 이름
-			System.out.println("fileName : " + fileName);
-			System.out.println("oName : " + oName);
-			
-			
+			//System.out.println("fileName : " + fileName);
+			//System.out.println("oName : " + oName);
+			UploadDTO uploadDTO = new UploadDTO();
+			uploadDTO.setFname(fileName);
+			uploadDTO.setOname(oName);
 			
 			noticeDTO.setTitle(multi.getParameter("title"));
 			noticeDTO.setWriter(multi.getParameter("writer"));
@@ -133,7 +141,14 @@ public class NoticeService implements Action {
 			
 			int result=0;
 			try {
+				/*synchronized (uploadDTO) {
+					
+				}*/
+				int num = noticeDAO.getNum();
+				noticeDTO.setNum(num);
 				result = noticeDAO.insert(noticeDTO);
+				uploadDTO.setNum(num);
+				result = uploadDAO.insert(uploadDTO);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

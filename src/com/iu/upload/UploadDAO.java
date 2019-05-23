@@ -11,7 +11,7 @@ public class UploadDAO {
 	public int insert(UploadDTO uploadDTO) throws Exception {
 		int result = 0;
 		Connection con = DBConnector.getConnect();
-		String sql = "INSERT INTO UPLOAD VALUES(NUM_SEQ.NEXTVAL, ?, ?, ?)";
+		String sql = "INSERT INTO UPLOAD VALUES(NOTICE_SEQ.NEXTVAL, ?, ?, ?)";
 		PreparedStatement st = con.prepareStatement(sql);
 		st.setInt(1, uploadDTO.getNum());
 		st.setString(2, uploadDTO.getOname());

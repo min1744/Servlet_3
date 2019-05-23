@@ -77,10 +77,11 @@ public class NoticeService implements Action {
 		//글이 있으면 출력
 		//글이 없으면 삭제되었거나 없는 글입니다.(alert) 리스트로
 		NoticeDTO noticeDTO = null;
-		NoticeDTO uploadDTO = null;
+		UploadDTO uploadDTO = null;
 		try {
 			int num = Integer.parseInt(request.getParameter("num"));
 			noticeDTO = noticeDAO.selectOne(num);
+			uploadDTO = uploadDAO.selectOne(num);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

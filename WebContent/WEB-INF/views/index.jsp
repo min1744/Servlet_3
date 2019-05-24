@@ -8,7 +8,7 @@
 <%@ include file="./temp/bootstrap.jsp" %>
 </head>
 <body>
-<jsp:include page="./temp/header.jsp"/>
+	<jsp:include page="./temp/header.jsp"/>
 	<h1>Index Page</h1>
 	<img alt="default1" src="./images/default1.jpg">
 </body>

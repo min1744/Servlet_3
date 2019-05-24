@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.iu.action.ActionForward;
+import com.iu.notice.NoticeDAO;
 import com.iu.notice.NoticeService;
 
 /**
@@ -25,21 +26,21 @@ public class NoticeController extends HttpServlet {
      */
     public NoticeController() {
         super();
-        // TODO Auto-generated constructor stub
         noticeService = new NoticeService();
+        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		//response.getWriter().append("Served at: ").append(request.getContextPath());
-		// /notice/notice... --getPathInfo()--> /notice...
+		//   /notice/notice*****
+		//    request.getPathInfo()
+		//   /notice*****
 		String command = request.getPathInfo();
-		ActionForward actionForward = null;
+		
+		ActionForward actionForward=null;
 		if(command.equals("/noticeList")) {
-			//actionForward = noticeService.selectList(request, response);
 			actionForward = noticeService.list(request, response);
 		}else if(command.equals("/noticeSelect")) {
 			actionForward = noticeService.select(request, response);
